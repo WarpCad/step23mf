@@ -1,0 +1,32 @@
+#!/bin/sh
+# Push gate. GitHub Actions never run on push here (they cost money), so this hook is what keeps
+# a broken commit off the remote: it runs the unit tests and the typecheck on the commit being pushed.
+# Installed by `npm install` (scripts/install-hooks.mjs sets core.hooksPath). Skip once with `git push --no-verify`.
+
+zero=0000000000000000000000000000000000000000
+head="$(git rev-parse HEAD)"
+pushing=0
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$zero" ] && continue # deleting a remote ref: nothing to test
+  pushing=1
+  commit="$(git rev-parse "$local_sha^{commit}" 2>/dev/null)"
+  if [ "$commit" != "$head" ]; then
+    echo "pre-push: $local_ref is not the checked-out commit, so the tests here would not cover it." >&2
+    echo "pre-push: check it out and push again, or skip the gate with --no-verify." >&2
+    exit 1
+  fi
+done
+
+[ "$pushing" = 1 ] || exit 0
+
+if ! git diff --quiet HEAD --; then
+  echo "pre-push: uncommitted changes to tracked files. Commit or stash them, so the tests run on what is pushed." >&2
+  exit 1
+fi
+
+echo "pre-push: npm test && npm run typecheck" >&2
+npm test && npm run typecheck || {
+  echo "pre-push: tests or typecheck failed; push refused. Fix them, or skip the gate with --no-verify." >&2
+  exit 1
+}

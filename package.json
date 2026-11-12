@@ -1,0 +1,56 @@
+{
+  "name": "@warpcad/step23mf",
+  "version": "0.1.0",
+  "description": "Command line tool that converts STEP files to 3MF, keeping part colors and names.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WarpCad/step23mf.git"
+  },
+  "homepage": "https://github.com/WarpCad/step23mf#readme",
+  "bugs": {
+    "url": "https://github.com/WarpCad/step23mf/issues"
+  },
+  "bin": {
+    "step23mf": "bin/step23mf.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "start": "node bin/step23mf.js",
+    "release": "release-it",
+    "prepare": "node scripts/install-hooks.mjs"
+  },
+  "keywords": [
+    "step",
+    "3mf",
+    "cad",
+    "converter",
+    "cli"
+  ],
+  "dependencies": {
+    "fflate": "0.8.3",
+    "occt-import-js": "0.0.23"
+  },
+  "devDependencies": {
+    "@release-it/conventional-changelog": "12.0.2",
+    "@types/node": "26.6.6",
+    "release-it": "21.1.2",
+    "typescript": "7.0.2",
+    "vitest": "5.1.0"
+  },
+  "overrides": {
+    "basic-ftp": "6.2.6"
+  }
+}

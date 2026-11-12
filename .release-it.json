@@ -1,0 +1,32 @@
+{
+  "$schema": "https://unpkg.com/release-it@21.1.2/schema/release-it.json",
+  "git": {
+    "requireBranch": "main",
+    "requireUpstream": true,
+    "requireCleanWorkingDir": true,
+    "requireCommits": true,
+    "commitMessage": "build(release): v${version}",
+    "tagName": "v${version}",
+    "tagAnnotation": "Release v${version}",
+    "push": true
+  },
+  "github": {
+    "release": true,
+    "releaseName": "v${version}"
+  },
+  "npm": {
+    "publish": true,
+    "publishArgs": ["--access", "public"],
+    "allowSameVersion": true
+  },
+  "hooks": {
+    "before:init": ["npm test", "npm run typecheck"]
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "conventionalcommits",
+      "infile": "CHANGELOG.md",
+      "header": "# Changelog"
+    }
+  }
+}

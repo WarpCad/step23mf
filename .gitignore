@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+coverage/
+*.log
+.env
+.env.*
+# Claude Code per-machine state
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+# Converted output from manual runs (and copies of it, such as `out copy/`)
+/out/
+/out copy*/

@@ -1,0 +1,40 @@
+# Runs `npm run release` (release-it) from CI, so the npm package gets provenance through npm trusted publishing
+# (OIDC). No NPM_TOKEN secret. See docs/decisions/release-tool.md.
+#
+# Started by hand from the Actions tab with the version to release. The first release (0.1.0) is published
+# locally instead, because a trusted publisher is set up on the package's npm settings page, which exists only
+# after the first publish.
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to release (for example 0.2.0), or patch, minor or major
+        required: true
+
+permissions:
+  contents: write # release commit, tag and GitHub release
+  id-token: write # npm trusted publishing and provenance
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the changelog reads every commit since the last tag
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      # --npm.skipChecks: release-it's `npm whoami` check fails under OIDC, which has no logged-in user.
+      - run: npm run release -- "$VERSION" --ci --npm.skipChecks
+        env:
+          VERSION: ${{ inputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
