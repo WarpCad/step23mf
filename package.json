@@ -1,6 +1,6 @@
 {
   "name": "@warpcad/step23mf",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Command line tool that converts STEP files to 3MF, keeping part colors and names.",
   "type": "module",
   "license": "MIT",
